@@ -43,8 +43,8 @@ RUN --mount=type=tmpfs,target=/var/cache/apt \
     --mount=type=tmpfs,target=/tmp \
     apt-get update; \
     apt-get upgrade -y; \
-    apt-get install --no-install-recommends -y openjdk-17-jre-headless python3.8; \
-    ln --symbolic /usr/bin/python3.8 /usr/bin/python3;
+    apt-get install --no-install-recommends -y openjdk-17-jre-headless python3.9; \
+    ln --symbolic /usr/bin/python3.9 /usr/bin/python3;
 
 COPY --from=openmpf_build /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/
 
