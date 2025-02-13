@@ -43,10 +43,16 @@ RUN --mount=type=tmpfs,target=/var/cache/apt \
     --mount=type=tmpfs,target=/tmp \
     apt-get update; \
     apt-get upgrade -y; \
+    # Add deadsnakes PPA for Python 3.9
+    apt-get install --no-install-recommends -y software-properties-common && \
+    add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update && \
     apt-get install --no-install-recommends -y \
-        python3.8 python3.8-venv libpython3.8 \
+        python3.9 python3.9-venv libpython3.9 \
         # Required for opencv-python
-        libglib2.0-0 libgl1-mesa-glx;
+        libglib2.0-0 libgl1-mesa-glx; \
+    # Make python3 point to python3.9
+    update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
 COPY --from=openmpf_build /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/
 
@@ -67,12 +73,22 @@ RUN --mount=type=tmpfs,target=/var/cache/apt \
     apt-get update; \
     # Some pip packages will try to compile C/C++ extensions during install. To compile the C/C++
     # extensions, a C++ compiler and the Python development headers must be installed.
-    apt-get install --no-install-recommends -y g++ python3.8-dev
+    apt-get install --no-install-recommends -y g++ python3.9-dev \
+    python3.9-distutils  # Required for pip
 
-RUN python3 -m venv "$COMPONENT_VIRTUALENV"; \
+# Install pip for Python 3.9
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
+    python3.9 get-pip.py && \
+    rm get-pip.py
+
+RUN python3.9 -m venv "$COMPONENT_VIRTUALENV"; \
     pip config --site set global.no-cache-dir true; \
     pip install --upgrade pip; \
-    pip install --upgrade setuptools;
+    pip install --upgrade setuptools wheel;
+
+# Verify Python version
+RUN python3 --version && \
+    $COMPONENT_VIRTUALENV/bin/python --version
 
 RUN --mount=from=openmpf_build,source=/home/mpf/openmpf-projects/openmpf-python-component-sdk/detection,target=/tmp/python,rw \
     pip3 install --no-cache-dir /tmp/python/api /tmp/python/component_util; \
