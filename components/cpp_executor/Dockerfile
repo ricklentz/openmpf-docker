@@ -79,7 +79,7 @@ COPY --from=openmpf_build /build-artifacts/install/bin/amq_detection_component \
 COPY --from=openmpf_build /build-artifacts/install/config/Log4cxxConfig.xml $MPF_HOME/config/
 
 COPY --from=openmpf_build /build-artifacts/install/lib/mpf_cpp_sdk.cpython-38-x86_64-linux-gnu.so \
-                          /usr/lib/python3.8/lib-dynload
+                          /usr/lib/python3.9/lib-dynload
 
 COPY --from=openmpf_build /scripts/* /scripts/
 
