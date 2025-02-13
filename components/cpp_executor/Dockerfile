@@ -44,7 +44,7 @@ RUN --mount=type=tmpfs,target=/var/cache/apt \
     apt-get update; \
     apt-get upgrade -y; \
     apt-get install --no-install-recommends -y \
-        python3.8 libpython3.8 wget ca-certificates gnupg2; \
+        python3.9 libpython3.9 wget ca-certificates gnupg2; \
     # Can't set up cuda repo at the beginning because it requires wget ca-certificates gnupg2
     wget -O- https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub \
             | apt-key add -; \
@@ -52,7 +52,7 @@ RUN --mount=type=tmpfs,target=/var/cache/apt \
         > /etc/apt/sources.list.d/cuda.list; \
     apt-get update; \
     apt-get install -y --no-install-recommends cuda-cudart-11-4; \
-    ln --symbolic /usr/bin/python3.8 /usr/bin/python3
+    ln --symbolic /usr/bin/python3.9 /usr/bin/python3
 
 COPY --from=openmpf_build /usr/local/bin/ffmpeg /usr/local/bin/ffprobe /usr/local/bin/
 
